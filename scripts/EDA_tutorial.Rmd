@@ -1,0 +1,617 @@
+---
+title: "EDA Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Exploratory Data Analysis (EDA) 🔍
+
+**Exploratory Data Analysis (EDA)** is an essential early phase in the data analysis process. It involves taking a deep dive into your data before performing more formal statistical analyses. The purpose of EDA is to help you **understand patterns, trends, and potential anomalies within your dataset**, providing a solid foundation for hypothesis testing or other inferential techniques that come after.
+
+🎯 **Key Objectives of EDA:**
+
+-   **Summarizing the Data 🧮:** EDA helps to describe the basic features of the data, such as central tendency (mean, median) and spread (variance, standard deviation), offering an initial understanding of what the data represents.
+
+-   **Identifying Missing Data and Outliers ❗:** It’s common to encounter missing responses or extreme values (outliers) when working with real-world data. Detecting these issues early is very important, since they can distort the results of your analysis. Through EDA, you can identify and decide how to handle these anomalies.
+
+-   **Understanding Relationships Between Variables 🔗:** When conducting scientific research, researchers often explore how different variables relate to each other. EDA helps you visualize and inspect these relationships, which guides your decisions about which variables to further investigate in your analysis.
+
+-   **Assessing Data Distribution 📊:** Many statistical tests (like t-tests or ANOVA) assume that the data follows a normal distribution. EDA allows you to check these assumptions using histograms, boxplots, or Q-Q plots, making sure you choose the right statistical test for your analysis.
+
+-   **Visualizing Data for Communication 📈:** EDA includes visual methods such as bar charts, scatterplots, and boxplots, which make it easier to communicate your findings. These visualizations help present research results in a more understandable and accessible way, both to academic audiences and the general public.
+
+This notebook provides guide for exploring how to use R for EDA. However, it is important to note that there isn't a strict guide (one-fit-all) for how to perform EDA. In the end it all comes to preference and the dataset your working, so feel free to explore on your own and don't be afraid to try.
+
+## 1. Know Your Data 🗄️
+
+In many instances throughout your career as a researcher, you will work with data that you gathered yourself. This makes you the person most knowledgeable about the data and its intricacies, which can make the process of understanding your dataset quicker and easier. However, this is not always the case. There will be situations where your knowledge is limited, either because it's not your data, or because you weren’t involved in the active collection or recording of the data.
+
+Fear not! The first and most important step of EDA is to **get familiar with your dataset** 🔍— or in other words, "***knowing your data.***" This involves examining the structure and contents of your data to understand its key characteristics. Getting to know the dataset's layout and variables helps ensure the data is ready for deeper analysis 🧠. It also provides a solid foundation for addressing any issues, such as missing data, inconsistencies, or coding errors, that may arise later in the process.
+
+### 1.1 Installing Tidyverse
+
+Before diving into the data, let’s install the **Tidyverse** package. The Tidyverse is a collection of R packages designed for data science, and it will save you time ⏳ by installing several useful dependencies at once. Later on, we’ll only need to load the specific packages we need for our analysis. If you're interested in more details about Tidyverse, feel free to explore its [documentation 📖](https://www.tidyverse.org/):
+
+```{r load_tidyverse, eval=FALSE, include=FALSE}
+
+# Install the Tidyverse package
+install.packages('tidyverse')
+```
+
+### 1.2 Importing Data ⬇️
+
+Now let's start by importing the dataset we'll be working with for this session. A quick note on the contents of the dataset: This dataset contains **synthetic data** on productivity, working hours, and well-being indicators for remote and in-office workers. 🏢💻 Please note that this version has been tempered with specifically for this workshop. 🛠️
+
+```{r load_dataset}
+
+# Load the readr library (to read csv files)
+library(readr)
+
+# Assign contents to a dataframe
+remote_work_data <- read_csv('../data/remote_work_productivity.csv')
+```
+
+### 1.3 Data Inspection and Summary 📝
+
+Now that we have imported the necessary dataset, let's start by **inspecting** its contents. The most obvious first step is to take a look at the data itself. While there are several ways to do this, since we often work with extensive datasets, I highly recommend you look at the first 10 entries to get an idea of its structure.
+
+```{r print_head}
+
+# View the first 10 rows of the dataset
+head(remote_work_data, 10)
+```
+
+It’s often a good practice to inspect the **structure** of the dataset and note down important information (column names, data types, dimensions, etc.) at the top of your analysis. This serves as a reference for later when working with the data. To do this, you can use the `str()` function, which you may already be familiar with. Run the cell below to check the dataset’s structure.
+
+```{r inspect_data}
+
+# Inspect the structure of the dataset
+str(remote_work_data)
+```
+
+After inspecting the dataset, we have a total of **5 columns**:
+
+-   **Employee_ID** (numeric): A unique identifier for each employee.
+-   **Employment_Type** (character): Indicates if the employee is working remotely or in-office.
+-   **Hours_Worked_Per_Week** (numeric): The number of hours worked per week by each employee.
+-   **Productivity_Score** (numeric): A score that indicates the employee’s productivity.
+-   **Well_Being_Score** (numeric): A score that measures the employee’s well-being.
+
+Additionally, there are **1,002 observations** in the dataset, giving us a substantial amount of data to work with for our analysis. 📊
+
+Before moving on, we might want to calculate some **basic descriptive statistics** like mean, median, and range for the numeric columns. This will give us quick sense of the data's scale and distribution before cleaning. To achieve this we can use the `summary()` command.
+
+```{r summary_statistics}
+
+# Get summary statistics for the numeric columns
+summary(remote_work_data)
+```
+
+## 2 Data Cleaning and Preparation 🧹
+
+The cleaning of our data is one of the most critical steps in our workflow 🛠️. This step focuses on preparing the data for subsequent analysis and ensures that the dataset is accurate, consistent, and ready for statistical processing. There is a well-known maxim in Data Science: **"*Garbage in, garbage out*"**—in other words, if the input data is flawed or messy, the results of the analysis will also be unreliable or inaccurate 🚨. Therefore, data cleaning becomes a crucial step because the quality of the results we obtain from our analysis will depend on the quality of the data we input 💡.
+
+By investing time in cleaning the data, we ensure that our dataset is free from errors, inconsistencies, and missing values, making our conclusions much more robust and trustworthy 📊.
+
+### **2.1 Handling Missing Data** 🚩
+
+Missing data can cause significant problems in statistical analysis. First, we’ll check for missing values and then decide how to handle them — either by removing, imputing, or flagging them for further investigation. 🔍 In R, missing values are represented by the **NA** flag.
+
+By running the `summary()` command, we saw that there were missing values in the columns `Hours_Worked_Per_Week` (NA's = 1) and `Productivity_Score` (NA's = 2). However, there may be others, especially in character-type data, since the `summary()` function only summarizes numeric data. 📊
+
+To isolate the rows with NA values, we can use the built-in `complete.cases()` function. This function returns a logical vector indicating which rows are complete (i.e., without any missing values).
+
+```{r subset_na_rows}
+
+# Identify rows with NA values
+rows_na <- !complete.cases(remote_work_data)
+
+# Display rows with NA values
+remote_work_data[rows_na, ]
+```
+
+There are additional methods and packages we could use for handling missing data. One that I find very useful is the **"skimr"** package. It provides a more comprehensive and visual summary of missing data in the dataset. While I won't ask you to install it now, here’s an example of what it looks like:
+
+```{r activate_skimr, echo=TRUE}
+# Install and load skimr (if needed)
+# install.packages('skimr')
+library(skimr)
+
+# Use skimr to inspect the data
+skim(remote_work_data)
+```
+
+Now that we've detected some missing values, what should we do? Well, it depends on the proportion of missing data. In this case, we have a total of **1002 observations** and only **4 missing values**, which is approximately **0.4%** of the data. Since it's such a small portion of the dataset, we can just discard these rows 🗑️.
+
+**Tip** 💡**:** A good rule of thumb is that if less than **5%** of the data is missing, it’s safe to remove those rows. However, if possible, reducing this percentage further is even better!
+
+To drop rows with NA values, we can use the same `complete.cases()` function:
+
+```{r drop_NA}
+
+# Drop rows with NA values in any column
+clean_remote_work_data <- remote_work_data[complete.cases(remote_work_data), ]
+
+# Use skimr to inspect the data
+skim(clean_remote_work_data)
+```
+
+### 2.2 Detecting Duplicate Rows 😮👉 👈😮👉 👈😮
+
+A common problem that often plagues datasets is the **duplication of rows**. Imagine a situation where you accidentally copy-pasted the same row twice into a file. Or consider a scenario where a participant had to repeat the same experiment twice, with only the second entry being valid, but both are recorded with the same participant code. How should we handle these cases? 🤔
+
+To detect duplicate rows in our dataset, we can use several methods in R. However, the one I find most intuitive is the **`duplicated()`** function. This function returns a logical vector indicating which rows are duplicates of earlier ones 🚩.
+
+```{r get_duplicated_rows}
+
+# Detect duplicated rows
+clean_remote_work_data[duplicated(clean_remote_work_data), ]
+```
+
+In this case, we have detected a duplicated row. In such a situation, we can drop one of the duplicate rows while keeping the other 🧹.
+
+```{r drop_duplicated_row}
+
+# Drop duplicated rows and keep the first occurrence
+clean_remote_work_data <- clean_remote_work_data[!duplicated(clean_remote_work_data), ]
+```
+
+But wait! 😱 Are we sure that there aren’t any other duplicated entries? To ensure data integrity, we usually rely on **unique identifiers** in the dataset. These identifiers should not repeat across rows. In our dataset, the unique identifier is the **`Employee_ID`** column. If there are any duplicates in this column, we can be certain that something is wrong!
+
+```{r get_duplicated_ID}
+
+# Detect duplicated Employee_IDs
+clean_remote_work_data[duplicated(clean_remote_work_data$Employee_ID), ]
+```
+
+```{r get_duplicated_ID_rows}
+
+# Detect duplicated Employee_IDs
+clean_remote_work_data[clean_remote_work_data$Employee_ID == 725, ]
+```
+
+Ok, we just found that **Employee_ID 725** has two rows, differing only in the **Well_Being_Score** column, where one value is **4** and the other is **49** 🤔. This is a tricky situation that depends on understanding the data. Sometimes we can easily identify the correct value based on context, but since we didn't collect this data ourselves, we need to adopt a more mindful approach and use some strategies to make an informed decision.
+
+**Tip 💡**: Since this is only a single observation, the simplest approach would be to drop the duplicate entries and move on. However, let's imagine that we really want to keep one of the values, and we need to figure out which is the correct one. In this situation, we can compare the conflicting values with the rest of the data to help make a decision.
+
+We want to determine which `Well_Being_Score` (4 or 49) makes more sense compared to other **remote employees**. Let's first calculate the mean, median, and standard deviation of the `Well_Being_Score` for other remote workers:
+
+```{r compare_other_employees_rows}
+
+# Filter for other remote workers excluding Employee_ID 725
+other_remote_workers <- clean_remote_work_data[((clean_remote_work_data$Employee_ID != 725) & (clean_remote_work_data$Employment_Type == 'Remote')), ]
+
+# Calculate mean, median, and standard deviation
+mean_well_score <- mean(other_remote_workers$Well_Being_Score)
+median_well_score <- median(other_remote_workers$Well_Being_Score)
+sd_well_score <- sd(other_remote_workers$Well_Being_Score)
+
+# Display the results
+cat("\n", "The mean:", mean_well_score ,"\n", "The median:", median_well_score ,"\n", "The sd:", sd_well_score, "\n")
+```
+
+Based on this initial comparison, we can already start to suspect that the **Well_Being_Score** of **49** is more plausible than **4**, but let’s refine this further.
+
+To make a more informed decision, we can compare **Employee_ID 725** to employees with similar `'Hours_Worked_Per_Week'` and `'Productivity_Score'`. This will give us an even better idea of which value to keep ✅ .
+
+```{r compare_similar_employees}
+
+# Set a threshold to find similar employees
+threshold <- 2
+
+# Define filtering condition for similar employees
+filtering_condition <- 
+  (other_remote_workers$Hours_Worked_Per_Week >= 34 - threshold &
+   other_remote_workers$Hours_Worked_Per_Week <= 34 + threshold) &
+  (other_remote_workers$Productivity_Score >= 84 - threshold &
+   other_remote_workers$Productivity_Score <= 84 + threshold)
+
+# Filter for similar workers
+other_remote_workers_similar <- other_remote_workers[filtering_condition, ]
+
+# Calculate mean and standard deviation for Well_Being_Score
+mean_well_score_similar <- mean(other_remote_workers_similar$Well_Being_Score)
+sd_well_score_similar <- sd(other_remote_workers_similar$Well_Being_Score)
+
+# Display the results
+cat("\n", "The mean for similar workers:", mean_well_score_similar, "\n", "The sd for similar workers:", sd_well_score_similar, "\n")
+```
+
+Based on this more focused comparison, we can confidently say that **49** is the correct value to keep.
+
+🧹 Now, let's remove the row with the incorrect **Well_Being_Score** of **4**:
+
+```{r remove_typo}
+
+# Define the condition to remove the row with the typo (Well_Being_Score = 4)
+filtering_condition <- (clean_remote_work_data$Employee_ID == 725) & 
+                       (clean_remote_work_data$Well_Being_Score == 4)
+
+# Remove the typo row
+clean_remote_work_data <- clean_remote_work_data[!filtering_condition, ]
+
+# Validate if the row was dropped
+clean_remote_work_data[clean_remote_work_data$Employee_ID == 725, ]
+```
+
+### **2.3 Data Type Conversion** 🔄
+
+It’s important to ensure that variables have the correct data types. 📊 For example, **categorical variables** should be converted to **factors**, and **numeric data** should remain numeric. This step is crucial to avoid issues when running statistical tests and to ensure that R handles the data appropriately during analysis.
+
+Let's review the different data types in our dataset to see if there is something we can improve for our analysis:
+
+```{r get_data_types}
+
+# Review the structure and data types of the dataset
+str(clean_remote_work_data)
+```
+
+At first glance, everything looks good. ✅ However, notice the **Employment_Type** column — it looks like it only assumes two possible values (perhaps "Remote" and "In-Office"). We can check what unique values exist in this column using the `unique()` function:
+
+```{r get_unique_values}
+
+# Check unique values in Employment_Type
+unique(clean_remote_work_data$Employment_Type)
+```
+
+Now, we’ve already seen that **R** provides a specific data type for **categorical variables** — **factors**. Converting categorical variables to factors has several advantages, most notably in terms of memory efficiency and the correct handling of categorical data in statistical models.
+
+To convert a column to a factor, we simply use the `as.factor()` function. Let’s convert the **Employment_Type** column to a factor:
+
+```{r convert_to_factor}
+
+# Convert Employment_Type to factor
+clean_remote_work_data$Employment_Type <- as.factor(clean_remote_work_data$Employment_Type)
+
+# Check the structure again to verify the change
+str(clean_remote_work_data)
+```
+
+✅ With this simple step, we ensure that R recognizes **Employment_Type** as a categorical variable, which will be important for any analysis, visualization and modeling involving this variable.
+
+## 3 Data Visualization
+
+Data visualization is perhaps one of the most underrated steps in the data processing pipeline, because it often only takes shape during the **EDA** phase 🔍. A more systematized workflow doesn't always rely on visualization to make decisions, focusing instead on statistical models. However, data visualization plays a crucial role in identifying patterns, outliers, and relationships that might not be obvious from numbers alone ✨.
+
+Today, we’ll explore a set of very useful graphs that often complement our analysis: the **histogram**, the **scatter plot**, and the **boxplot**. We'll explore each one individually and see how it contributes to a better understanding of our dataset.
+
+### 3.1 Introducing `ggplot2`: The Power of Visualization in R 🎨
+
+Before diving into the specific plots, let’s introduce the tool that we’ll use to visualize our data — the **`ggplot2`** package. Probably the most widely-used plotting library in R, **`ggplot2`** offers a flexible and powerful system for creating beautiful, informative visualizations 🖼️.
+
+To create plots using **ggplot2**, we follow a layered approach. You start by specifying the dataset, then define the **aesthetics (**`aes()`**)**, which determine what variables will be mapped to the x and y axes, colors, and more.
+
+Let’s begin by plotting a simple **scatter plot** to visualize the relationship between `Hours Worked Per Week` and `Productivity Score`, while using `Employment_Type` to color the points:
+
+```{r plot_scatter}
+
+#Load ggplot2 library
+library(ggplot2)
+
+# Create a scatter plot with Employment_Type as a color factor
+ggplot(data = clean_remote_work_data) +
+  geom_point(mapping = aes(x = Hours_Worked_Per_Week, y = Productivity_Score, color = Employment_Type))
+```
+
+**How does it work? 🤔**
+
+In **ggplot2**, everything revolves around **aesthetics (**`aes()`**)**. Aesthetics define how variables in the dataset are mapped to the visual properties of the plot. Let’s break down the code:
+
+-   `ggplot(data = clean_remote_work_data)`: This initializes the plot, specifying the data (`clean_remote_work_data`) we want to visualize — it creates a blank canvas.
+
+-   `geom_point()`: This adds the **geometry layer**, in this case, a scatter plot. The points on the plot represent individual data points.
+
+-   `aes(x = Hours_Worked_Per_Week, y = Productivity_Score)`: Here, we define the **aesthetics**, mapping the **x-axis** to `Hours Worked Per Week` and the **y-axis** to `Productivity Score`.
+
+-   `color = Employment_Type`: This adds a color aesthetic, which differentiates points based on the type of employment (e.g., remote or in-office).
+
+### 3.2 Histograms
+
+We’ve already discussed **histograms** and their characteristics, so now let’s focus on creating and customizing a histogram based on the contents of our dataset. For instance, let’s explore the results from the **Well_Being_Score** column.
+
+```{r histogram}
+
+# Apply Square Root Rule for number of bins
+nbins <- floor(sqrt(nrow(clean_remote_work_data)))
+
+# Create the histogram
+ggplot(data = clean_remote_work_data) +
+  geom_histogram(mapping = aes(x = Well_Being_Score), bins = nbins, color = '#939F5C', fill = '#BBCE8A') +
+  labs(
+    title = 'Well-Being Scores by Employment Type',
+    x = 'Well-Being Score',
+    y = 'Count of Employees',
+    caption = "Data source: Remote Work Survey"
+  )
+```
+
+In the code above, we created a histogram of the **Well_Being_Score** column. You probably noticed some new commands, such as the `labs()` function, which allows us to add **titles**, **axis labels**, and a **caption**.
+
+**Tip 💡**: The **Square Root Rule** is one of the simplest rules for determining the number of bins in a histogram. It’s especially handy when you don’t want to dive deep into the data distribution but need a quick visual representation.
+
+$$
+Number\ of\ bins = \sqrt{n}
+$$
+
+We can actually add more information, such as drawing a line at the **mean** of the Well_Being_Score and annotating it, using the following code:
+
+```{r annotate_mean}
+
+# Calculate the mean
+mean_well_being <- mean(clean_remote_work_data$Well_Being_Score)
+
+# Add mean line and annotation
+ggplot(data = clean_remote_work_data) +
+  geom_histogram(mapping = aes(x = Well_Being_Score), bins = nbins, color = '#939F5C', fill = '#BBCE8A') +
+  geom_vline(aes(xintercept = mean_well_being), color = "#D16014", linetype = "dashed", size = 1) +
+  annotate("text", x = mean_well_being - 10, y = 95, label = paste("Mean =", round(mean_well_being, 2)), color = "#D16014") +
+  labs(
+    title = 'Well-Being Scores by Employment Type',
+    x = 'Well-Being Score',
+    y = 'Count of Employees',
+    caption = "Data source: Remote Work Survey"
+  )
+
+```
+
+This code adds a **red dashed line** representing the mean, and we annotate the mean value directly on the plot. 📝
+
+But what if we want to **separate the histograms** by the type of employment (remote or in-office)? One way to do this is to plot both histograms on the same figure with some **transparency (alpha)** to compare them visually.
+
+```{r hist_hue_employment_type}
+
+ggplot(data = clean_remote_work_data) +
+  geom_histogram(mapping = aes(x = Well_Being_Score, fill = Employment_Type), bins = nbins, alpha = 0.5, color = "black", position = "identity") +
+  scale_fill_manual(values = c("Remote" = "#F2B880", "In-Office" = "#C98686")) +
+  labs(
+    title = 'Well-Being Scores by Employment Type',
+    x = 'Well-Being Score',
+    y = 'Count of Employees',
+    caption = "Data source: Remote Work Survey"
+  )
+```
+
+In the code above, we:
+
+-   **Overlay the histograms** for each employment type using `alpha = 0.5` to make the bars semi-transparent.
+
+-   Use `position = "identity"` to make sure the bars are plotted on top of each other.
+
+-   Customize the colors for **Remote** and **In-Office** employees using `scale_fill_manual()`.
+
+This approach allows us to visually compare the distributions of well-being scores across different employment types. 👀
+
+Finally, we can also separate each graph between separate figures based on the employment type, using the facet_wrap() function.
+
+```{r hist_facet_wrap}
+
+
+ggplot(data = clean_remote_work_data) +
+  geom_histogram(mapping = aes(x = Well_Being_Score, fill = Employment_Type), 
+                 bins = nbins, color = "black", alpha = 0.7) +
+  scale_fill_manual(values = c("Remote" = "#F2B880", "In-Office" = "#C98686")) +
+  labs(
+    title = 'Well-Being Scores by Employment Type',
+    x = 'Well-Being Score',
+    y = 'Count of Employees',
+    caption = "Data source: Remote Work Survey"
+  ) +
+  facet_wrap(~ Employment_Type)  # Split the plot by Employment_Type
+```
+
+The `facet_wrap(~ Employment_Type)` creates a separate plot for each level of the **Employment_Type** variable (in this case, "Remote" and "In-Office").
+
+### 3.3 Boxplots
+
+Finally, will have a look at **boxplots.** As the name suggest, these graphs resemble boxes that provides us a useful way for identifying **outliers**, understanding **data spread**, and comparing distributions across different groups. Their interpretation is based on a **five-number summary**:
+
+-   **Minimum**: The smallest value, excluding outliers.
+
+-   **First Quartile (Q1)**: The 25th percentile.
+
+-   **Median**: The middle value (50th percentile).
+
+-   **Third Quartile (Q3)**: The 75th percentile.
+
+-   **Maximum**: The largest value, excluding outliers.
+
+Lets, start by having a look at the a **boxplot** to compare the **Well-Being Score** across different **Employment Types** (Remote vs In-Office).
+
+```{r boxplot_intro}
+
+ggplot(data = clean_remote_work_data) +
+  geom_boxplot(mapping = aes(x = Employment_Type, y = Well_Being_Score, fill = Employment_Type)) +
+  scale_fill_manual(values = c("Remote" = "#74A4BC", "In-Office" = "#B6D6CC")) +
+  labs(
+    title = "Distribution of Well-Being Scores by Employment Type",
+    x = "Employment Type",
+    y = "Well-Being Score",
+    caption = "Data source: Remote Work Survey"
+  )
+```
+
+**How Do Boxplots Work?** **🤔**📊
+
+1.  First, **the box**, represents the interquartile range (IQR), which is the distance between the **first quartile (Q1)** and the **third quartile (Q3).**
+
+2.  The **line inside the box** is the **median**.
+
+3.  The **whiskers** extend from the box to the **minimum** and **maximum** values that are **not outliers**.
+
+    **Tip 💡**: The definition of an **outlier** is not universal, as it depends on how we actually compute them. However, a general definition considers outliers to be values that are **too distant from the main cluster of data points**, often indicating anomalies, errors, or rare events.
+
+4.  Finally, **outliers** are represented as individual points that lie outside the whiskers.
+
+Similar to histograms, **boxplots** offer various customization options. For instance, let’s look at the next code chunk. Here, we manipulated the graph to display the **actual data points**, similar to a **swarm plot**, and we customized the **outliers** to have distinct formats.
+
+```{r swarm_plot}
+
+ggplot(data = clean_remote_work_data) +
+  geom_boxplot(mapping = aes(x = Employment_Type, y = Well_Being_Score, fill = Employment_Type), 
+               outlier.colour = "red", outlier.shape = 8, outlier.size = 3) +
+  geom_jitter(mapping = aes(x = Employment_Type, y = Well_Being_Score, color = Employment_Type), 
+              width = 0.2, alpha = 0.5) +  # Add swarm plot
+  scale_fill_manual(values = c("Remote" = "#F2B880", "In-Office" = "#C98686")) +
+  scale_color_manual(values = c("Remote" = "#F19B4A", "In-Office" = "#C44E4E")) +  # Color for jitter points
+  labs(
+    title = "Well-Being Scores by Employment Type",
+    x = "Employment Type",
+    y = "Well-Being Score",
+    caption = "Data source: Remote Work Survey"
+  ) +
+  guides(color = "none")  # Hide the color legend
+
+```
+
+In the code above, we specified that we wanted the **outlier points** to have a **star shape** (`outlier.shape = 8`) and a **red color** (`outlier.colour = "red"`). Additionally, we added **jitter** to the individual data points (`geom_jitter()`), which allows all observations to be displayed, similar to a **swarm plot**. This helps to better visualize the **distribution** and **density** of the points within each category, providing a clearer picture of the underlying data.
+
+## 4 Checking Normality 🔎
+
+Before we proceed with any statistical testing, there is an important step that often takes place, especially when we want to apply **parametric statistical tests** for hypothesis testing. These tests often require several assumptions, and one that stands out is the **assumption of normality**. In other words, we need to ask: ***Does my data follow a normal distribution or not?***
+
+As we have seen, there are several ways to evaluate normality, ranging from computing **simple descriptive statistics** to using **visualization tools** and conducting **statistical tests** for normality. While we may sometimes rely on a single approach, the best and most careful approach often combines multiple methods to gather **stronger evidence** of normality.
+
+Since this analysis is often applied before hypothesis testing, let’s set up a scenario: We want to compare **productivity scores by hours worked per week** between **remote** and **in-office employees**. Specifically, we will be looking at the **productivity score per hour worked** (`Productivity_Rate`) to determine whether there is a significant difference between these two groups. By doing so, we aim to understand whether the **efficiency** of employees — measured by their productivity per hour worked — varies based on their working environment (remote vs. in-office).
+
+------------------------------------------------------------------------
+
+❔ If **measuring efficiency** is our goal, then `Productivity Rate` (productivity per hour worked) balances the effect of different work hours better. Employees may work a varying number of hours per week, but simply comparing raw **productivity scores** does not account for these differences. For example, a person who works more hours might have a higher productivity score, but this doesn’t necessarily mean they are more **efficient**.❔
+
+------------------------------------------------------------------------
+
+So lets start by computing a new column for our target variable, `Productivity Rate`.
+
+```{r compute_target_variable}
+
+# Compute the new column 'Productivity_Rate' as the Productivity Score divided by Hours Worked Per Week
+clean_remote_work_data$Productivity_Rate <- clean_remote_work_data$Productivity_Score / clean_remote_work_data$Hours_Worked_Per_Week
+
+# View the first few rows to confirm the new column is created
+head(clean_remote_work_data)
+```
+
+So, with our target variable in place, let’s begin by computing **kurtosis** and **skewness**, and then visualize the histograms for the target variable (`Productivity Rate`). This will give us a better understanding of the data's distribution.
+
+⚠️ *Note that we won’t have time to fully explore statistical inference, so we won’t be conducting the full hypothesis testing in this case. However, we will prepare the groundwork to ensure that we can move forward with testing if needed.*
+
+### 4.1 Skewness and Kurtosis
+
+As previously seen, **skewness** gives us an idea of the **asymmetry** in the data distribution — whether the data is skewed to the left (negatively skewed) or to the right (positively skewed). On the other hand, **kurtosis** provides a measure of the **tailedness** of the distribution—whether the data has heavy tails (*leptokurtic*), light tails (*platykurtic*), or normal tails (*mesokurtic*).
+
+To compute these values, we will need two packages the `moments` package and the `dplyr` package.
+
+```{r Load_packages_moments}
+
+# Install and load the moments package if not already installed
+# install.packages('moments')
+library(dplyr)
+library(moments) 
+```
+
+Afterwards, we will group the data by the `Employment_Type` and for each group we simply compute the skewness and kurtosis.
+
+```{r calculate_moments}
+
+# Calculate skewness and kurtosis for each Employment_Type
+grouped_stats <- clean_remote_work_data %>%
+  group_by(Employment_Type) %>%
+  summarise(
+    Skewness = skewness(Productivity_Rate),  # Calculate skewness 
+    Kurtosis = kurtosis(Productivity_Rate)   # Calculate kurtosis
+  )
+
+# Display the results
+print(grouped_stats)
+```
+
+Now, there's is a lot of things in the code above that are new. So how does it all work. Well let's see:
+
+1.  **`clean_remote_work_data %>%`**:
+
+    -   This part of the code initiates a **pipeline**. The pipe operator (`%>%`) allows you to pass the output of one function directly into the next function, making the code easier to read. (**Note**: We introduced the pipe operator in the first workshop.)
+
+    -   In this case, we are starting with the `clean_remote_work_data` dataframe and passing it through a series of functions.
+
+2.  **`group_by(Employment_Type)`**:
+
+    -   The `group_by()` function is part of the **dplyr** package, which allows you to group the data by one or more variables.
+
+    -   Here, we are grouping the data by **Employment_Type** (e.g., "Remote" and "In-Office").
+
+    -   After grouping, any subsequent calculations (e.g., skewness and kurtosis) will be applied **separately** to each group.
+
+3.  **`summarise()`**:
+
+    -   The `summarise()` function creates a summary of the data. After grouping, it applies the functions you specify to each group and returns the results in a new dataframe.
+
+    -   Inside `summarise()`, we are calculating both **skewness** and **kurtosis** for each group.
+
+But getting back to the actual results, what do we observe here? In terms of **skewness**, the values are very close to what we would expect from a **normal distribution**. However, **kurtosis**,, seems quite elevated, particularly for the **Remote** group. This suggests that the distribution for **Remote** workers may have heavier tails than expected under normality, indicating the presence of more extreme values.
+
+```{r hist_normality_check}
+
+# Apply Square Root Rule for number of bins
+nbins <- floor(sqrt(nrow(clean_remote_work_data)))
+
+ggplot(data = clean_remote_work_data) +
+  geom_histogram(mapping = aes(x = Productivity_Rate, fill = Employment_Type), bins = nbins, color = 'black') +
+  facet_wrap(~ Employment_Type) +
+  labs(
+    title = "Distribution of Productivity Scores by Employment Type",
+    x = "Productivity Score",
+    y = "Count of Employees"
+  ) +
+  geom_text(data = grouped_stats, aes(x = 4, y = 70, label = paste("\nSkewness:", round(Skewness, 2),  "\nKurtosis:", round(Kurtosis, 2))),color = "black", size = 4)
+```
+
+As expected, both distributions share **similarities** with a normal distribution. However, it is quite clear that there is an **increased spread** in the **Remote** condition when compared to the **In-Office** group. This indicates more variability in the productivity scores of remote workers. Still, this alone does not necessarily reject the assumption of normality, and we can add other robust methods to assess this.
+
+### 4.2 Q-Q plot
+
+Another powerful tool to assess normality is the **Quantile-Quantile (Q-Q) plot**. This plot compares the quantiles of your data against the quantiles of a theoretical normal distribution. If the data is normally distributed, the points on the Q-Q plot will roughly follow a straight line.
+
+To compute and visualize the Q-Q plot of each distribution, we can use the `ggplot2` to generate Q-Q plots for each group.
+
+```{r qq_plots}
+
+# Create a Q-Q plot for the standardized data
+ggplot(clean_remote_work_data) +
+  geom_qq(mapping = aes(sample = Productivity_Rate, color = Employment_Type)) +
+  geom_qq_line(mapping = aes(sample = Productivity_Rate, color = Employment_Type)) +
+  facet_wrap(~ Employment_Type) +
+  labs(
+    title = "Q-Q Plot for Productivity Scores by Employment Type",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  )
+```
+
+In the code above, the `geom_qq()` generates the points for the **Q-Q plot**, whereas the `geom_qq_line()` adds a reference line that helps visualize deviations from normality.
+
+The results aren't as promising as we'd hoped. The **sample quantiles** deviate significantly from the **theoretical quantiles**, and based on the evidence we've gathered so far, it's reasonable to conclude that `Productivity Rate` likely does not satisfy the **normality assumption**. However, before drawing final conclusions, we’ll extend the analysis to include a formal **statistical test** for normality.
+
+### 4.3 Shapiro-wilk test
+
+The **Shapiro-Wilk test** is a statistical tests used for assessing normality. It tests the null hypothesis that a sample comes from a normally distributed population. If the p-value is low (typically below 0.05), we can reject the null hypothesis, indicating that the data does not follow a normal distribution.
+
+📝 **Note on p-value and Shapiro-Wilk Test**: The **p-value** is a **probability** that helps us decide whether the evidence in the data is strong enough to reject the **null hypothesis**. In the **Shapiro-Wilk test**, the null hypothesis states that the **data follows a normal distribution**. If the **p-value** is less than **0.05**, we have evidence to **reject the null hypothesis**, meaning the data likely does **not** follow a normal distribution. For example, a **p-value of 0.03** means there’s a **3% chance** of observing the current data (or more extreme) if the data were normally distributed. In this case, we would **reject** the assumption of normality.
+
+In R, we can compute the **Shapiro-Wilk test** for each group (Remote and In-Office) to formally evaluate the normality of the `Productivity Rate`. For that will use the `dplyr` package.
+
+```{r shapiro_wilk}
+
+# Compute Shapiro-Wilk test for each group
+shapiro_results <- clean_remote_work_data %>%
+  group_by(Employment_Type) %>%
+  summarise(
+    p_value = shapiro.test(Productivity_Rate)$p.value
+  )
+
+# Display the results
+shapiro_results
+```
+
+We obtained **p-values** of **1.108803e-04** for **In-Office** employees and **3.649559e-18** for **Remote** employees. Given that both p-values are significantly below the typical threshold of 0.05, we are in a position to **reject the null hypothesis** of normality for both groups. This confirms that the `Productivity Rate` does not follow a normal distribution in either group.
+
+While this result was something we had already inferred from our earlier visual analysis (via Q-Q plots and histograms), running the **Shapiro-Wilk test** provides formal statistical confirmation of our findings.

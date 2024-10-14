@@ -1,0 +1,925 @@
+---
+title: "R Notebook"
+output: "html_document"
+---
+
+# 1. Introduction to R Notebook & Markdown 📔✨
+
+This is an [R Markdown](https://rmarkdown.rstudio.com/lesson-1.html) Notebook. An R Notebook allows you to combine **R code**, **text**, and **output** in one document, making it ideal for interactive reports.
+
+Creating an R Notebook is straightforward 🎯:
+
+1.  Open RStudio
+
+2.  Go to **File** $\rightarrow$ **New File** $\rightarrow$ **R Notebook**
+
+**Tip 1** ✒️**:** The first time you create a notebook, you'll see the YAML (YAML Ain't Markup Language) header. This defines metadata like the title, author, and output format. While it’s not critical for our work right now, if you're curious to learn more, check out 🔎: [YAML documentation](https://yaml.org/) and [R Markdown YAML basics](https://zsmith27.github.io/rmarkdown_crash-course/lesson-4-yaml-headers.html).
+
+When you open the notebook, you’ll notice some sections are darker with a `{r}` marker. These are code chunks, which define the parts of the notebook where you can write and run R code. When you run code in a chunk, the output (like text, plots, or tables) appears directly below it 🔽.
+
+To try it out, run the following code chunk by clicking the *Run* button (▷) or pressing `Ctrl+Shift+Enter` (macOS: `Cmd+Shift+Enter`) while your cursor is inside the chunk:
+
+```{r}
+print('Hello, World!')
+```
+
+By default, RStudio runs in `Notebook Mode`, meaning results are shown inline, directly in the notebook. If you prefer the traditional console output, you can disable this by clicking the gear icon (⚙️) in the editor toolbar and selecting `Chunk Output in Console`.
+
+You can also personalize code chunks. To insert a new chunk, click the **Insert Chunk** button on the toolbar, press **Ctrl+Alt+I** (macOS: **Cmd+Option+I**), or type `/` and select **R Code Chunk.**
+
+Once you’ve inserted a chunk, click the gear icon (⚙️) inside the chunk. You’ll see several options. For now, let’s focus on **naming the chunk**. In the **Chunk Name** field, type `"example_code"` and hit **Apply**.
+
+Next, notice the green 🟩 "C" at the bottom of the window. This is your ***Navigator***, which allows you to easily move between chunks and sections. Naming chunks makes it much easier to navigate through your notebook, especially as it grows in size.
+
+Deleting a code chunk is simple 🚮. Just select the chunk by clicking on it, and then press **backspace** or **delete** on your keyboard. Try this out by deleting the next chunk in your notebook.
+
+```{r delete_me}
+print('Goodbye, world!')
+```
+
+**Tip 2** ✒️**:** If you regret deleting the previous cell, no worries! You can easily undo the action by pressing `Ctrl+Z` (macOS: `Cmd+Z`) or by going to the **Edit** menu in the top bar and selecting **Undo**.
+
+One of the key advantages of R Notebooks is the ability to easily share your work with others. To do this, click the down arrow (▿) next to the **Preview** button and select **Knit to HTML**. This will create an HTML file in your working directory, which you can share. Keep in mind, though, that the HTML file is not interactive — code chunks will appear as static text 📝.
+
+Congratulations! That wraps up our supersonic introduction to R Notebook & Markdown! 🎉 Remember, this is just the start. With Markdown, you can create impressive, customizable reports, much like building a website! 🌐 Happy exploring! 🚀
+
+------------------------------------------------------------------------
+
+# 2. R Basics 📘
+
+## 2.1 Intro
+
+In this section, we'll cover some basic concepts for working with R, including common tasks like creating variables, assigning values, and exploring different types of variables . But before we dive in, let’s go over a few helpful tips for programming with R and R Notebooks:
+
+🔹 **R is case-sensitive**: For example, `A` is not the same as `a`, and `Ggplot` is different from `ggplot`. Pay attention to letter cases when writing your code!
+
+🔹 **Comments in R**: Comments are marked with `#`. Anything written after `#` is ignored by R. Comments are great for explaining your code, making it more readable, and even for testing alternative lines of code. For instance, try it out in the following chunk:
+
+```{r comments}
+
+# Try to comment and uncomment different lines
+print( "Good morning!" )
+print( "Good night!" )
+
+```
+
+🔹 **Code Execution**: R runs code line by line, starting from the top and continuing until the end of the chunk.
+
+🔹 **Good Practices**: While R is flexible with coding styles, following some best practices will help you write cleaner, more readable code, especially when working with Notebooks. This include:
+
+-   **Organize Code in Chunks** 🧩: In R Notebooks, organize your code into logical chunks. Give each chunk a meaningful name, especially in larger projects, so it’s easier to navigate.
+
+-   **Use White Spaces** ⬜: Don’t cram your code together. Add spaces between operators (`=`, `+`, etc.) and use blank lines to separate sections of your code. It improves readability.
+
+-   **Limit Line Length** 📏: Keep each line of code reasonably short (e.g., under 80 characters). Long lines can make your code harder to read.
+
+These are just a few tips, but we’ll explore more as we continue! 🚀
+
+## 2.2 R Variables 🧮
+
+**Variables** in R are used to store data values, ranging from simple numbers or text to complex structures like graphs. In R, variables are often referred to as **objects**, but for simplicity in this workshop, we’ll stick with the term **variables**.
+
+### Creating Variables and Assigning Values
+
+In R, creating a variable and assigning a value is straightforward. We use the **assignment operator** `<-` (a combination of the less than symbol `<` and a hyphen `-`). Let’s try it out:
+
+```{r variables_assignment}
+my_var <- 12 
+my_other_var <- "This is a value"
+```
+
+**Tip 3** ✒️**:** While R also supports using the `=` (equal) operator for assignments, it's generally considered bad practice because it can lead to issues in some situations.
+
+In the example above, we created two variables: `my_var` and `my_other_var`, assigning them different values. To check the assigned values, simply type the variable name in the **R Console** or use a **new code chunk**. Alternatively, you can view all stored variables by clicking the **Environment** tab in the top-right pane, where you’ll find a list of variables in the **Global Environment**.
+
+⚠️ Keep in mind, once you close RStudio, the variables will no longer exist unless saved.
+
+### Changing Variable Values
+
+You can update the value of a variable anytime by reassigning it. Try it yourself:
+
+```{r new_assignment}
+# Assign new values to the variables
+my_var <- 12
+my_other_var <- "This is a value"
+
+# Print the updated values
+print(paste("my_var =", my_var))
+print(paste("my_other_var =", my_other_var))
+```
+
+Great! You may have noticed that we used quotes (`""`) around `my_other_var`, but not for `my_var`. This is because:
+
+-   **my_var** is a **numeric** type (it’s a number), so no quotes are needed.
+
+-   **my_other_var** is a **character string** (text), which requires either single (`'`) or double (`"`) quotes.
+
+If you try to assign text without quotes, R will give an error. To check the type of a variable, you can:
+
+-   Click the **Environment** tab and switch to **Grid** view to see a summary of your variables and their types.
+
+-   Alternatively, use the `str()` or `class()` functions to inspect variable types programmatically:
+
+```{r checking_type}
+# Check the type of variables
+str(my_var)  # Numeric
+class(my_other_var)  # Character
+```
+
+By using these functions, you'll get a clearer understanding of the different types of variables you're working with! 🎯
+
+### Different Data types
+
+Understanding the different data types in R is essential, even though it may seem tempting to skip over these technical details. Ignoring them can cause unexpected issues later on. In R, there are **six basic data types**. We've already seen **numeric** and **character (string)** types, but there are also **integer**, **logical**, **complex**, and **raw**. We’ll focus on the four that you’ll use most frequently, as complex and raw data types are rarely needed.
+
+-   **Numeric:** These represent numbers with decimals (e.g., `3.14`, `42.0`)
+
+-   **Integers:** Represents whole numbers without decimals (e.g., `5L`, `42L`). To specify an integer in R, add the letter `L` after the number to distinguish it from numeric.
+
+-   **Logical:** Logical values are either `TRUE` or `FALSE`. These are useful for conditions, comparisons, or when working with Boolean logic.
+
+-   **Character:** Used to store text (e.g., `"Hello World"`). Always enclosed in single (`'`) or double (`"`) quotes.
+
+R is generally good at automatically detecting data types, but occasionally, you’ll need to help it out. For example, when distinguishing between numeric and integer types, you need to add the `L` after the number to indicate it's an integer.
+
+```{r variable_types}
+# Numeric type
+num_var <- 5.5
+
+# Integer type
+int_var <- 5L
+
+# Logical type
+logic_var <- TRUE
+
+# Character type
+char_var <- "This is a string"
+```
+
+### Changing Data Types 🔄
+
+R allows you to change the type of a variable at any time if necessary. You can use functions like `as.numeric()`, `as.character()`, and `as.logical()` to convert variables between types.
+
+```{r convert_type}
+# Convert a numeric to a character
+num_to_char <- as.character(num_var)
+
+# Convert a logical to numeric
+logic_to_num <- as.numeric(logic_var)
+```
+
+Be careful when converting between data types, as it can sometimes lead to **"unexpected" results**. For example, when you try to convert a character string into a number, the result might not be what you expect:
+
+```{r convert_type_error}
+# Example: Converting a character to numeric
+char_var <- "Hello"
+num_var <- as.numeric(char_var)
+print(num_var)  # This will return NA with a warning
+```
+
+In this case, since "Hello" can’t be interpreted as a number, R returns `NA` (Not Available) along with a warning message. Always make sure that the data you are converting is compatible with the type you're targeting to avoid surprises in your analysis. In other words, **know your types!** 💡
+
+### Naming Variables 📝
+
+Recall when we talked about some suggestions for formatting your code, were here come some additional recommendations for working with variables in R.
+
+**Use Descriptive Object Names** 📝: Instead of using vague names like `x` or `data1`, use clear and descriptive names such as `student_scores` or `survey_results`. This makes your code more understandable.
+
+**Consistent Naming Style** 🧑‍💻: Stick to a consistent naming convention, such as using `snake_case` (`my_variable_name`) or `camelCase` (`myVariableName`). Consistency helps maintain readability, especially in larger projects.
+
+**Avoid Overwriting Built-in Functions** ⚠️: R has many built-in functions like `mean()`, `sum()`, and `data()`. Avoid naming your variables the same as these functions, as it can cause confusion and errors in your code.
+
+## 2.3 R Operators 🔢
+
+**Operators** in R are used to perform various operations on variables and values. You've already encountered the **assignment operator** (`<-`) to assign values to variables. However, R provides many other operators, including **Arithmetic**, **Comparison**, **Logical**, and some **Miscellaneous** operators.
+
+### Arithmetic operators ➕➖
+
+Arithmetic operators perform mathematical operations on numeric values:
+
+| Operator  | Description      | Example   |
+|:----------|:-----------------|:----------|
+| **`+`**   | Addition         | `1 + 2`   |
+| **`-`**   | Subtraction      | `1 - 2`   |
+| **`*`**   | Multiplication   | `1 * 2`   |
+| **`/`**   | Division         | `1 / 2`   |
+| **`^`**   | Exponent         | `2 ^ 3`   |
+| **`%%`**  | Modulus          | `7 %% 3`  |
+| **`%/%`** | Integer Division | `7 %/% 3` |
+
+```{r arithmetic_operators}
+# Arithmetic Operators Example
+addition <- 1 + 2
+multiplication <- 3 * 4
+exponent <- 2 ^ 3
+modulus <- 7 %% 3
+
+# Printing the results
+print(paste("Addition (1 + 2) =", addition))          
+print(paste("Multiplication (3 * 4) =", multiplication)) 
+print(paste("Exponent (2 ^ 3) =", exponent))           
+print(paste("Modulus (7 %% 3) =", modulus))            
+```
+
+### Comparison Operators ✔️❌ {#comparison-operators}
+
+Comparison operators are used to compare two values:
+
+| Operator | Description              | Example  |
+|:---------|:-------------------------|:---------|
+| **`==`** | Equal                    | `1 == 1` |
+| **`!=`** | Not equal                | `1 != 2` |
+| **`>`**  | Greater than             | `2 > 1`  |
+| **`<`**  | Less than                | `1 < 2`  |
+| **`>=`** | Greater than or equal to | `2 >= 1` |
+| **`<=`** | Less than or equal to    | `1 <= 2` |
+
+```{r comparison_operators}
+# Comparison Operators Example
+is_equal <- 1 == 1
+is_greater <- 5 > 3
+is_less_equal <- 5 <= 2
+is_not_equal <- 3 != 4
+
+# Printing the results
+print(paste("Is 1 equal to 1? ", is_equal))            
+print(paste("Is 5 greater than 3? ", is_greater))      
+print(paste("Is 5 less than or equal to 2? ", is_less_equal)) 
+print(paste("Is 3 not equal to 4? ", is_not_equal))    
+```
+
+### Logical Operators 🧠 {#logical-operators}
+
+Logical operators are used to combine conditional statements:
+
+| Operator | Description                                                                         |
+|:----------------|:------------------------------------------------------|
+| **`&`**  | Element-wise Logical **AND** operator. Returns TRUE if both elements are TRUE       |
+| **`&&`** | Logical **AND** operator - Returns TRUE if both statements are TRUE                 |
+| **`|`**  | Element-wise Logical **OR** operator. Returns TRUE if one of the statements is TRUE |
+| **`||`** | Logical **OR** operator. Returns TRUE if one of the statements is TRUE              |
+| **`!`**  | Logical **NOT** - Returns FALSE if statement is TRUE                                |
+
+```{r logical_operators}
+
+# Logical Operators Example
+
+# Element-wise Logical AND (&)
+and_result_elementwise <- c(TRUE, FALSE, TRUE) & c(TRUE, TRUE, FALSE)
+
+# Logical AND (&&) - only checks the first element of each vector
+and_result <- TRUE && FALSE
+
+# Element-wise Logical OR (|)
+or_result_elementwise <- c(TRUE, FALSE, TRUE) | c(FALSE, TRUE, FALSE)
+
+# Logical OR (||) - only checks the first element of each vector
+or_result <- TRUE || FALSE
+
+# Logical NOT (!)
+not_result <- !TRUE
+
+# Combining logical operators
+combined_logical <- (5 > 3) & (4 <= 4)  # TRUE & TRUE
+
+# Printing the results
+print(paste("Element-wise AND (TRUE & FALSE) =", paste(and_result_elementwise, collapse = ", ")))  
+print(paste("Logical AND (TRUE && FALSE) =", and_result))  # FALSE
+
+print(paste("Element-wise OR (TRUE | FALSE) =", paste(or_result_elementwise, collapse = ", ")))  # TRUE, TRUE, TRUE
+print(paste("Logical OR (TRUE || FALSE) =", or_result))  # TRUE
+
+print(paste("Logical NOT (!TRUE) =", not_result))  # FALSE
+
+print(paste("Combined Logical (5 > 3) & (4 <= 4) =", combined_logical))  # TRUE
+```
+
+### Miscellaneous Operators 🛠️
+
+Miscellaneous operators in R provide a variety of functionalities for data manipulation. While there are many such operators, we’ll focus on a few that are most useful in day-to-day R programming:
+
+| Operator   | Description              | Example             |
+|:-----------|:-------------------------|:--------------------|
+| **`%in%`** | Element Belongs to a Set | `3 %in% c(1, 2, 3)` |
+| **`:`**    | Sequence Generation      | `1:5`               |
+| **`%>%`**  | Pipe                     | `1 + 1 %>% + 2`     |
+
+```{r miscellaneous_operators}
+# Example with these miscellaneous operators
+
+# %in% operator
+x <- 3
+y <- c(1, 2, 3, 4, 5)
+print(x %in% y)  # TRUE
+
+# Sequence operator
+sequence <- 1:5
+print(sequence)  # 1 2 3 4 5
+
+# Pipe operator (requires dplyr or magrittr library)
+# Install dplyr package if not installed
+# install.packages("dplyr")
+library(dplyr)
+result <- 2 %>%
+  + 2 %>%
+  + 2
+print(result)
+```
+
+## 2.4 Installing Packages 📦
+
+You might have gotten an error message after running the previous script. Notice the `library(dplyr)` at the top of the script. The **pipe operator** (`%>%`) is not part of R's base package, which means it doesn’t come pre-installed. To use it, you need to install the appropriate package (like **dplyr**) and load it into your environment.
+
+How to Install and Load a Package:
+
+1.  **Install the package** (e.g., `dplyr`) by running:
+
+    ```{r install_packages}
+    install.packages("dplyr")
+    ```
+
+2.  **Load the package** into your environment by using:
+
+    ```{r import_libraries}
+    library(dplyr)
+    ```
+
+Now you have access to the `pipe` operator and other functions provided by the package! Try to run the previous code and see if you still get an error 🔍.
+
+**Tip 4** ✒️**:** Instead of activating a package through the R console or a code chunk, if the package is already installed and you only need to import its contents into your current workspace, you can do so easily via the **Packages** tab in the lower-right part of RStudio. Simply use the 🔍 to search for the desired package, and then tick the box next to the package name to load it into the current session. This provides a quick, visual way to activate packages without needing to use the `library()` command.
+
+## 2.5 Functions ⚙️, Conditionals 🔄, and Loops 🔁
+
+Functions, conditional statements, and loops are fundamental programming concepts in any language, including R. These are essential building blocks that allow you to create reusable code, make decisions based on conditions, and repeat tasks efficiently. While these concepts might seem intimidating at first, their fundamentals are quite easy to grasp. Let’s dive into each one!
+
+### Functions ⚙️
+
+Functions are the cornerstone of any programming language. You’ve already used several functions in R, like `print()`, `as.numeric()`, `class()`, and `str()`. A function is essentially a block of code that runs when it’s called. You can pass data, called **parameters**, into a function, and the function returns a result.
+
+To create a function in R, use `function()`. Check it out:
+
+```{r creating_functions}
+
+# Creating a simple function
+adding_two <- function(number) {
+  return(number + 2)
+}
+
+# Input
+result <- adding_two(3)
+# Output
+print(result)  
+```
+
+The function `adding_two()` takes a number as an argument and adds 2 to it. Notice that the body of the function is enclosed by brackets "`{ }`".
+
+**Tip 5** ✒️**:** **Argument vs Parameter**—A parameter is the variable listed inside the parentheses when defining a function, while an argument is the actual value passed to the function when calling it.
+
+Note that by default, a function must be called with the correct number of arguments. If a function expects one argument, you must provide exactly one argument when calling it; otherwise, you’ll get an error.
+
+```{r function_error, eval=FALSE, include=FALSE}
+# Function error example
+adding_two()  # Error: argument "number" is missing
+```
+
+However, some functions may include **default parameters**. If a corresponding argument is not provided, the default value will be used.
+
+```{r default_argument}
+# Function with a default argument
+adding_with_default <- function(number = 10) {
+  return(number + 2)
+}
+
+print(adding_with_default())  
+print(adding_with_default(5))  
+```
+
+You may have noticed the difference between functions that **print** a value and those that **return** a value. When a function returns a value, that value can be further manipulated, while a function that prints a value cannot be used in calculations or other operations.
+
+Finally, a often overlooked topic is that of variables scope. Variables can have either **local scope** or **global scope**. Local variables are defined inside a function and can only be used within that function. Global variables, on the other hand, are defined outside a function and can be accessed anywhere.
+
+```{r global_variables, eval=FALSE, include=FALSE}
+
+global_var <- 10  # Global variable
+
+scope_example <- function() {
+  local_var <- 5  # Local variable
+  return(global_var + local_var)  # Can access both
+}
+
+print(scope_example())  # 15
+print(global_var)  # 10 (still accessible)
+print(local_var)  # Error: local_var is not defined outside the function
+```
+
+**Tip 6 ✒️**: If a local variable inside a function has the same name as a global variable, the local variable takes priority within the function.
+
+```{r global_var_override}
+global_str <- 'Hello'
+
+override_example <- function() {
+  global_str <- 'World'
+  print(global_str)
+}
+
+override_example() # call override_example
+print(global_str) # print global
+```
+
+Similarly to variables, there are also some best practices when working with functions in R. These include:
+
+**Function Names Should Reflect Actions** ⚡: Always use **action-oriented names** for functions, as they typically perform a task or an action. For example, prefer names like `calculate_sum()`, `generate_report()`, or `plot_graph()` over generic names like `process()` or `doTask()`. This clarifies what the function is meant to do.
+
+**Keep Functions Short and Focused** ✂️: Each function should do one thing and do it well. If a function is becoming too complex, consider breaking it into smaller, more manageable functions.
+
+**Avoid Side Effects** ⚠️: Functions should ideally return values rather than changing global variables or other external state. This makes functions easier to test, reuse, and debug.
+
+**Check Input Types and Handle Errors Gracefully** 🛡️: Use **conditional statements** inside your functions to validate the input types and values. This will make your functions more robust and help prevent unexpected errors. We haven't yet given enough attention to conditionals, but in the following section, you'll see exactly what we mean. Let's dive into conditionals and how they work!
+
+### Conditionals 🔄
+
+R supports logical conditions based on the logical operators introduced earlier in the [Logical Operators 🧠](#logical-operators) and [Comparison Operators ✔️❌](#comparison-operators) sections. These conditions allow you to control the flow of your code, especially using **"if statements"** and loops. Let's start with **if statements**.
+
+The **if statement** evaluates a condition and executes a block of code if the condition is met.
+
+```{r if_statement}
+john_height <- 177 # in cm
+peter_height <- 171 # in cm
+
+if (john_height > peter_height) {
+  print("John is taller than Peter.")
+}
+```
+
+In this example, we have two variables: `john_height` and `peter_height`. The if statement checks if `john_height` is greater than or equal to (`>=`) `peter_height`. Since John's height is greater, the condition is true, and the message is printed. Similarly to functions, we also use **curly brackets** to define the scope of the if statement, ensuring it only affects the code inside.
+
+Try changing the heights and see what happens when John’s height is smaller than Peter’s!
+
+**"If statements"** are very useful, but sometimes, you need more control over the flow of your code. That's where **else if** and **else** come in. The **else if** statement lets you check additional conditions, while **else** catches everything not covered by the previous conditions.
+
+```{r if_else_statments}
+animal <- "🐶"
+
+if (animal == "🐱") {
+  print("This is a cat.")
+} else if (animal == "🐶") {
+  print("This is a dog.")
+} else {
+  print("This is another animal.")
+}
+```
+
+In this example, if the first condition (`animal == "cat"`) is false, the code moves to the **else if** condition. If that’s also false, the **else** block is executed
+
+**Tip 7 ✒️**: The **else** statement isn't mandatory, but it's helpful for catching situations where none of the previous conditions in an if-else chain are met. You can use `if` statements on their own without needing an `else if` or `else`, but including an `else` provides a fallback in case no conditions are true. This makes your code more robust and ensures that there's always a defined outcome, even when none of the specified conditions apply.
+
+Finally, remember when we mentioned using **conditional statements** to validate input in functions? Here's an example to demonstrate how that works:
+
+```{r function_check_input, eval=FALSE, include=FALSE}
+calculate_area <- function(radius) {
+    if (!is.numeric(radius)) {
+        stop("Error: Input must be a numeric value.")
+    }
+    return(pi * radius^2)
+}
+
+calculate_area(2)
+```
+
+In this function, `calculate_area()` calculates the area of a circle, but only if the input `radius` is numeric. Before any calculations, the function checks the type of `radius` using `is.numeric()`. If the input is not numeric, the `if` statement activates and throws an error using `stop()`. The **Not (`!`)** operator ensures that the condition triggers when the radius is **not** a number.
+
+### Loops 🔁
+
+Loops are incredibly handy structures that help us save time and make our code more readable. Imagine a scenario where you need to print all the numbers from 1 to 10. You could write 10 separate `print()` statements, but imagine if you had to print up to 100 or 1,000. That would take a lot of time and effort! This is where loops come to the rescue. In R, there are two main loop structures: **for loops** and **while loops**.
+
+Let's start by trying to solve it using for loops. A **for loop** is used to iterate over a sequence, such as a list or a range of numbers. For example, imagine you have a list of groceries (apples, bananas, cereals, etc.). Instead of handling each item individually, you can use a loop to iterate over each item and perform an action, such as printing it.
+
+In R, for loops work similarly to Python. You provide a list or sequence, and for each element in that sequence, the loop performs the specified operation. Here's how it works:
+
+```{r for_loops}
+
+for (x in 1:10) {
+  print(x)
+}
+```
+
+This code reads as: for each value of `x` in the sequence from 1 to 10, print the value of `x`. The loop starts by setting `x = 1`, prints `1`, then moves to the next value, `x = 2`, and continues until it reaches 10.
+
+We've seen the `:` operator before, which is used to generate a sequence of numbers. But, as mentioned, our list can be anything, including a list of animals:
+
+```{r loop_animals}
+
+animals <- list("🐶", "🐱", "🐭", "🐰", "🐷", "🐟")
+
+for (animal in animals) {
+  print(animal)
+}
+```
+
+The **while loop** behaves a bit differently. While loops continue to execute as long as a given condition is true. Unlike for loops, which iterate over a sequence, while loops are controlled by a **conditional statement**. Here’s a simple example:
+
+```{r while_loops}
+# While loop to print numbers from 1 to 10
+i = 1
+while (i <= 10) {
+  print(i)
+  i <- i + 1
+}
+```
+
+In this example, the loop continues as long as the value of `i` is less than or equal to 10. After each iteration, the value of `i` is incremented by 1. Once `i` exceeds 10, the loop stops. You probably noticed some differences compared to the **for loop**. In the **while loop** example, we had to manually create and initialize a variable (`i`) before running the code. We did something similar in the **for loop** for the animals, but in that case, the loop automatically advances through the sequence on its own. In contrast, with the **while loop**, we have to manually increment the value of `i` by adding 1 after each iteration. Otherwise, the loop would continue indefinitely, causing an **infinite loop**, which is generally not the intended behavior.
+
+While loops are often used in more complex applications, but the fundamental idea is the same: continue executing as long as a condition is met. Loops can also be combined with **if statements** to make more dynamic code. Here’s an example where we loop through a list of animals and use conditional logic to check whether each animal is a fish or not:
+
+```{r loops_everything_together}
+
+for (animal in animals) {
+ if (animal != "🐟") {
+   print(paste(animal, "is not a fish!"))
+ }
+  else {
+    print(paste(animal, "is a fish!"))
+  }
+}
+```
+
+Feel free to experiment with the loops above, and see how they interact with other code structures like conditionals!
+
+# 3. R Data Structures 🗄️
+
+Now that we've covered some basic concepts in R, like variables, functions, conditionals, etc... it's time to dive into some of the main structures for storing data. These **data structures** are essential when performing analysis in R, as they open up a wide range of possibilities for handling and understanding data. The great thing is that these concepts are quite simple in nature. You might have already come across some of these structures, such as **lists** (`list()`) and **vectors** (`c()`). However, there are other types of structures that are equally important and worth exploring.
+
+## 3.1 Vectors
+
+Perhaps the simplest data structure in R is the **vector**. Vectors can contain numbers, characters, or logical values, but the key point is that **all elements in a vector must be of the same type**. In other words, you can't mix numbers and characters in a single vector. If a vector contains only one value, it's called a **scalar**. Here's an example of how to create a numeric vector:
+
+```{r vectors}
+
+vec <- c(0, 1, 2, 3, 4)  # Alternatively: vec <- 0:4
+
+print(vec)
+```
+
+In this example, we used the `c()` function to combine five numbers into a vector, where each item is separated by a comma. Alternatively, we can create a sequence of numbers using the `:` operator, which generates a range of values.
+
+To access a value in a vector, we use **indexing**, which means each element in a vector has an index reflecting its position relative to the other elements. In R, indexing starts from **1** (unlike some languages that start from 0).
+
+```{r vectors_indexing}
+
+vec <- c(10, 20, 30, 40, 50)
+
+# Accessing elements using indexing
+first_element <- vec[1]  # First element
+fifth_element <- vec[5]  # Fifth element
+
+# Printing the results
+print(paste("The first element is:", first_element))  
+print(paste("The fifth element is:", fifth_element))  
+```
+
+In the example above we access the **first element** of the vector by using `vec[1]` and we access the **fifth element** using `vec[5]`. Note that if we provide a index that doesn't exist, we will get an error message.
+
+Values in a vector are **mutable**, meaning they can be changed after the vector is created. To modify a value in a vector, we use its index and assign a new value.
+
+⚠️**The new value must match the data type of the original vector.** ⚠️
+
+```{r modifying_vectors}
+
+# Modifying the value of the second element
+vec[2] <- 25
+
+# Print the updated vector
+print(vec)
+```
+
+In case we want to add new values to our vector, we can just use the the `append()` function or combine two lists using the `c()` function.
+
+```{r new_values_vectors}
+
+# Add a new value (scalar)
+vec <- c(vec, 100)
+
+# Print the updated vector
+print(vec)
+
+# Add a new vector of values
+vec <- c(vec, c(1000, 10000))
+
+# Print the updated vector
+print(vec)
+```
+
+Finally, since each element in a vector is of the same type, we can perform various **set operations** on them. One common operation is **sorting** the elements by value. R makes this easy with built-in functions like `sort()`.
+
+```{r vectors_sorting}
+
+vec <- c(4, 2, 8, 1, 7)
+
+# Sorting the vector in ascending order
+sorted_vec_asc <- sort(vec)
+print(sorted_vec_asc)
+
+# Sorting the vector in descending order
+sorted_vec_desc <- sort(vec, decreasing = TRUE)
+print(sorted_vec_desc)  # Output: 8 7 4 2 1
+```
+
+## 3.2 Lists
+
+**Lists** in R are similar to vectors, but with one important distinction: lists can contain **multiple types of data**. This means that you can store different types of variables, such as numbers, characters, logicals, vectors, other lists, and even functions. This flexibility makes lists very powerful in certain situations, although it can come at the **cost of performance**.
+
+```{r list_creation}
+
+# Creating a list with different data types
+my_list <- list(1, "apple", TRUE, c(2, 4, 6))
+
+# Print the list
+print(my_list)
+```
+
+Moreover we can name each element in a list when creating it or by using the `names()` function. Named elements allow easier access and improve readability.
+
+```{r named_list_creation}
+  
+# Creating a named list
+my_named_list <- list(number = 1, fruit = "apple", flag = TRUE)
+
+# Print the named list
+print(my_named_list)
+
+
+# Adding names to an existing list (my_list)
+names(my_list) <- c("Number", "Fruit", "Flag", "Vector")
+
+# Print the named list
+print(my_list)
+```
+
+You can index lists in several ways:
+
+1.  **Single bracket (`[]`)**: Returns a list.
+
+2.  **Double brackets (`[[]]`)**: Returns the actual element.
+
+3.  **Dollar sign (`$`)**: Used to access named elements.
+
+```{r list_indexing}
+
+# Access the second element (returns a list)
+print(my_list[2])
+
+# Access the second element (returns the value)
+print(my_list[[2]])
+
+# Accessing an element by name using $
+print(my_named_list$fruit)
+```
+
+The dollar sign (`$`) is especially useful for accessing named elements directly.
+
+You can modify list elements by indexing them.
+
+```{r list_change_values}
+# Changing the first element in the list
+my_list$Number <- 100
+print(my_list)
+```
+
+Finally, similarly to vectors, we can add new elements to a list using the `append()` function or combine two lists using the `c()` function.
+
+```{r list_append}
+
+# Adding a new element to the list
+my_list <- append(my_list, "new_element")
+print(my_list)
+
+# Combining two lists
+new_list <- list("new_item")
+combined_list <- c(my_list, new_list)
+print(combined_list)
+```
+
+## 3.3 Matrices and arrays
+
+A **matrix** in R is essentially a vector with added attributes called **dimensions**. It is a **two-dimensional** data structure with rows and columns:
+
+-   **Rows** represent a horizontal collection of data.
+
+-   **Columns** represent a vertical collection of data.
+
+You can create a matrix using the `matrix()` function, where you specify the number of rows (`nrow`) and columns (`ncol`). Here’s how you can create a matrix:
+
+```{r matrices}
+
+mat <- matrix(1:9, nrow = 3, ncol = 3)
+
+# Print the matrix
+print(mat)
+```
+
+In this example, we used `matrix(1:9, nrow = 3, ncol = 3)` to create a 3x3 matrix filled with numbers 1 through 9. Numbers are filled column-wise.
+
+An **array** is a generalization of a matrix, meaning it can have more than two dimensions. While a matrix is two-dimensional (rows and columns), an array can be multidimensional (3D, 4D, etc.). Arrays are created similarly to matrices but can represent more complex data structures.
+
+```{r arrays}
+
+# Creating a 3D array (2x3x2)
+arr <- array(1:12, dim = c(2, 3, 2))
+
+# Print the array
+print(arr)
+```
+
+The `dim = c(2, 3, 2)` argument specifies that the array will have 2 rows, 3 columns, and 2 layers (third dimension). Arrays are useful for more complex data manipulation, but for simpler analyses, matrices are more common.
+
+Indexing matrices is very similar to vectors; however, matrices are **two-dimensional**, meaning you need to specify both a **row** and a **column** to access or modify a specific element.
+
+In matrix indexing, you use the format `matrix[row, column]` to refer to a particular element. Here's an example:
+
+```{r matrix_indexing}
+
+# Creating a 3x3 matrix
+mat <- matrix(1:9, nrow = 3, ncol = 3)
+
+# Accessing elements: [row, column]
+element <- mat[2, 3]  # Element in the 2nd row, 3rd column
+
+# Printing the result
+print(element)  
+```
+
+While matrices and arrays are powerful, they are not always necessary for everyday data analysis. In this workshop, we’ll skip a deep dive into these structures, as they are less useful for the tasks we’ll focus on. However, it’s good to know they exist for more advanced use cases.
+
+## 3.4 Data Frames 🗂️
+
+**Data frames** are the most common and familiar data structure you'll encounter in R. They are essentially tables of data, similar to spreadsheets like Excel. Each column in a data frame can store a different type of data, such as numeric or character. However, the key rule is that **each column must contain only one type of data**. You can think of a data frame as a collection of vertical vectors "glued" together in a structured way.
+
+To illustrate, let's use the popular `'palmerpenguins'` dataset. First, we need to install and load the dataset.
+
+```{r download_palmer, eval=FALSE, include=FALSE}
+
+# Install the 'palmerpenguins' package (only run once)
+install.packages('palmerpenguins')
+```
+
+```{r load_palmer}
+
+# Load the package and dataset
+library(palmerpenguins)
+head(penguins)
+```
+
+The **palmerpenguins** dataset provides detailed information about **three species of penguins**—Adélie, Chinstrap, and Gentoo—found in the **Palmer Archipelago** in Antarctica. if you inspect it, you'll notice different types of data: **numeric (dbl)**, **integer**, and **factors (fct)**. Data frames are designed for **structured data** (or "tidy data" in R), meaning each column represents a variable, and each row corresponds to an observation. Importantly, each column should have the same number of observations, and missing values are represented by `NA` (Not Available).
+
+### Factors in Data Frames
+
+Data frames introduce a new type of data called **factors**, which are essentially **categories**. Factors are useful when you have a limited set of possible values for a variable. In the **palmerpenguins** dataset, factors include species, island, and sex, because all possible values are predefined.
+
+To create factors, use the `factor()` function:
+
+```{r factors}
+# Creating a factor
+species <- factor(c("Adelie", "Chinstrap", "Gentoo", "Adelie"))
+
+print(species)
+```
+
+### Creating a Data Frame
+
+You can create a data frame in many ways. The most common method is to use vectors. Since a data frame is essentially a collection of vectors, you can combine them using the `data.frame()` function.
+
+```{r creating_dataframes_from_vectors}
+
+# Creating vectors
+names <- c("John", "Alice", "Bob", "Carol")
+ages <- c(23, 30, 25, 27)
+heights <- c(175, 162, 180, 165)
+
+# Creating a data frame
+df <- data.frame(names, ages, heights)
+
+# Display the data frame
+print(df)
+```
+
+The resulting data frame will have a **header row** where the column names match the vector names provided.
+
+### Inspecting Data Frames
+
+You can use the `str()` function to get a compact summary of a data frame, including its dimensions, column names, and data types..
+
+```{r data_frames_str}
+
+# Check the structure of the data frame
+str(df)
+```
+
+This will tell you how many rows and columns the data frame has, and provide useful information about each column, such as its type (numeric, character, etc.).
+
+### Accessing Data in Data Frames
+
+Accessing data in a data frame can be done in multiple ways, which is useful because it allows flexibility depending on your needs. You might want to access entire columns, rows, or specific values.
+
+1\. **Accessing Columns** (similar to accessing elements in a list using `$`):
+
+```{r df_columns_accessing}
+
+# Access the 'species' column
+species <- penguins$species
+
+# Display unique values in the 'species' column
+print(unique(species))
+```
+
+2\. **Accessing Specific Values** (using positional indexing):
+
+```{r df_positional_indexing_values}
+
+# Access the first value in the first column
+penguins[1, 1]
+
+# Alternatively, access the same value using column name
+penguins$species[1]
+```
+
+3\. **Accessing Multiple Rows or Columns**:
+
+```{r df_positional_indexing_subsets}
+
+# Access rows 1 to 10 and columns 1 to 5
+penguins[1:10, 1:5]
+
+# Alternatively, access specific rows and columns by name
+penguins[c(1, 5, 10), c('species', 'bill_length_mm', 'body_mass_g')]
+```
+
+In this code, we accessed specific rows and columns using both numerical indices and column names.
+
+4\. **Accessing Only Rows or Columns**:
+
+```{r df_positional_indexing_row_cols}
+
+# Access only the first 10 rows
+penguins[1:10, ]
+
+# Access only the first 5 columns
+penguins[, 1:5]
+```
+
+There are many ways to access and manipulate data in a data frame. Whether you need an entire column, specific rows, or just individual values, R provides various flexible methods for data extraction. While having multiple options might seem overwhelming, it allows you to choose the approach that fits your personal preference and the specific task at hand.
+
+### Importing Data 📥
+
+When working with data in R, you will often need to import your own datasets from external sources. These datasets may come in different formats such as **CSV files**, **text files**, **Excel sheets**, or even from external databases. One of the most common formats is **CSV (Comma-Separated Values)**, which is widely used for storing tabular data.
+
+To import a CSV file, we need to use the `readr` package, which provides tools for reading and writing CSV files and other delimited files. By default, R does not support reading CSV files out of the box. To read CSV files, we need to install the `readr` package. You only need to install this package once.
+
+```{r download_readr, eval=FALSE, include=FALSE}
+
+# Install the 'readr' package (only run once)
+install.packages('readr')
+```
+
+After installing the package, load it into your current R session:
+
+```{r load_readr}
+
+# Load the package and dataset
+library(readr)
+```
+
+Now that the package is loaded, we can import a CSV file using the `read_csv()` function. Below is an example of how to import a dataset from a local CSV file.
+
+```{r read_csv}
+
+# MrSimple. (2024). Remote Work Productivity [Data set]. Kaggle. https://doi.org/10.34740/KAGGLE/DSV/9350801
+
+
+remote_work_df <- read_csv('../data/remote_work_productivity.csv',show_col_types = FALSE)
+
+head(remote_work_df, 10)
+```
+
+# Conclusion 🏆
+
+Throughout this workshop, we've explored the basics of working with R, including data structures, functions, loops, conditional statements, and importing data. These foundational concepts form the building blocks of effective data analysis in R. We’ve also touched on how to import CSV files using the `readr` package, a common task when working with real-world data.
+
+R is a powerful tool for statistical computing and data visualization, and as you continue to work with it, you'll discover its extensive capabilities. Whether you're working with large datasets, creating interactive visualizations, or building predictive models, R has a wealth of packages and resources to support your efforts.
+
+## Additional Resources for Learning R:
+
+-   [**R for Data Science (Book)**](https://r4ds.had.co.nz/)**:** A great resource for learning the principles of data science in R.
+
+-   [**CRAN R Documentation**](https://cran.r-project.org/manuals.html)**:** The official R documentation covering packages, functions, and more.
+
+-   [**RStudio Cheatsheets**](https://posit.co/resources/cheatsheets/)**:** Quick reference guides for working with R and popular packages like dplyr, ggplot2, and more.
+
+-   [**Stack Overflow**](https://stackoverflow.com/questions/tagged/r)**:** A vibrant community where you can ask questions and find answers related to R programming.
+
+### Contact information:
+
+If you have any further questions or would like additional assistance with working in R, feel free to reach out:
+
+-   **Email**: *pme.rodrigues\@campus.fct.unl.pt*
+
+Happy coding, and best of luck with your future projects in R!
